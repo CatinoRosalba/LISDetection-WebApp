@@ -51,16 +51,16 @@ def detect(name_gif):
                 if session["isRecognized"] == False:
                     if detected != last:
                         last = detected
-                        #yield str(segni[np.argmax(res)]) + " "
                         yield "Sbagliato "
                     if name_gif == detected:
-                        yield "Corretto!"
                         session["isRecognized"] = True
+                        session.pop("name_gif")
+                        session.pop("path_gif")
+                        yield "Corretto! "
+
 
 
 def randgif():
-    session.pop("name_gif")
-    session.pop("path_gif")
     gifs = os.listdir(app.config['UPLOAD_FOLDER'])                      # salva il contenuto della cartella gif
     gif_rand = random.choice(gifs)                                      # sceglie una gif
     name_gif, ex_gif = gif_rand.split(".")                              # splitta il nome (es. "hello.gif" -> name_gif = "hello", ex_gif = "gif")
@@ -75,17 +75,21 @@ def randgif():
 @app.route('/')
 def index():
     session["isRecognized"] = False
-    session["name_gif"] = "a"
-    session["path_gif"] = "a"
     return Response(stream_with_context(render_template('index.html')))
+
+
+@app.route('/gif')
+def gif():
+    global path_gifname, name_gif
+    path_gifname, name_gif = randgif()
+    return stream_template("gif.html", sign_gif=path_gifname, name_gif=name_gif)
 
 
 #pagina minigioco
 @app.route('/minigioco')
 def minigioco():
-    path_gifname, name_gif = randgif()
     session["isRecognized"] = False
-    return stream_template("minigioco.html", sign_gif=path_gifname, name_gif=name_gif)
+    return stream_template("minigioco.html", name_gif=name_gif)
 
 
 # In questo url viene eseguita solo la cam
