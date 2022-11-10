@@ -8,26 +8,28 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js'></script>
-
+    <script src="{{url_for('static', filename='js/text-to-speach.js')}}"></script>
     <title>Home</title>
 </head>
 <body onload="onLoad()">
-    <main>
-        <h2>CIao sto provando il text to speach</h2>
-    </main>
 
     <div class="vh-50">
 
-        <h2 class="text-center mb-5 mt-3">Scegli il minigioco</h2>
+        <h1 class="text-center mb-5 mt-3">eLIS</h1>
+
+        <div id="dialogo" class="text-center mb-3">
+            <p class="fs-3 lh-sm">Ciao, sono Pepper! <br> Impara con me la lingua italiana dei segni!
+            <p class="fs-2">Scegli uno dei due minigiochi</p>
+        </div>
 
         <div class="container text-center d-flex align-items-center justify-content-center" >
             <div class="row">
-                <div class="card me-5 p-3" style="width: 18rem;" >
+                <div class="card me-5 p-3" style="width: 18rem;">
                     <a class="link-dark stretched-link text-decoration-none" href="/gif"></a>
                         <img src="static/images/icon-i.png" class="mx-auto" alt="Minigioco alfabeto">
                         <div class="card-body" >
                             <h5 class="card-title ">Segni</h5>
-                            <p class="card-text"> Some quick example text to build on the card title and make up the bulk of the card's content. </p>
+                            <p class="card-text"> Impara alcune parole come "amore", "grazie", "ciao" replicando i segni mostrati. </p>
                         </div>
                     </a>
                 </div>
@@ -37,7 +39,7 @@
                         <img src="static/images/icon-s.png" class="mx-auto" alt="Minigioco alfabeto">
                         <div class="card-body">
                             <h5 class="card-title">Alfabeto</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <p class="card-text">Impara l'alfabeto ripetendo replicando i segni mostrati.</p>
                         </div>
                     </a>
                 </div>
@@ -47,29 +49,13 @@
     </div>
 
 </body>
-    <script>
-        const button = document.getElementById("speak");
-        const pauseButton = document.getElementById("pause");
-        const synth = window.speechSynthesis;
-        const voices = synth.getVoices();
-
-        function onLoad(){
-            if (synth.paused === true) {
-                    synth.resume();
-                    return;
-            }
-
-            const main = document.querySelector("main");
-            textToSpeech(main.innerText);
-            synth.cancel;
+    <script type="text/javascript">
+        const aLink = document.getElementsByTagName('a');
+        const stopSpeach = function() {
+           synth.cancel();
         }
-
-        function textToSpeech(text) {
-            const msg = new SpeechSynthesisUtterance();
-             msg.text = text;
-             msg.voice = voices.filter(function (voice) { return voice.name === "Google italiano"; })[0];
-
-             synth.speak(msg);
+        for (var i = aLink.length - 1; i >= 0; --i) {
+            aLink[i].onclick = stopSpeach;
         }
 
         (() => {
@@ -79,5 +65,4 @@
             }
         })();
     </script>
-
 </html>
