@@ -10,9 +10,11 @@
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js'></script>
 
     <title>Home</title>
-
 </head>
-<body>
+<body onload="onLoad()">
+    <main>
+        <h2>CIao sto provando il text to speach</h2>
+    </main>
 
     <div class="vh-50">
 
@@ -22,7 +24,7 @@
             <div class="row">
                 <div class="card me-5 p-3" style="width: 18rem;" >
                     <a class="link-dark stretched-link text-decoration-none" href="/gif"></a>
-                        <img src="static/icon-i.png" class="mx-auto" alt="Minigioco alfabeto">
+                        <img src="static/images/icon-i.png" class="mx-auto" alt="Minigioco alfabeto">
                         <div class="card-body" >
                             <h5 class="card-title ">Segni</h5>
                             <p class="card-text"> Some quick example text to build on the card title and make up the bulk of the card's content. </p>
@@ -32,7 +34,7 @@
 
                 <div class="card p-3" style="width: 18rem;">
                     <a class="link-dark stretched-link text-decoration-none" href="#">
-                        <img src="static/icon-s.png" class="mx-auto" alt="Minigioco alfabeto">
+                        <img src="static/images/icon-s.png" class="mx-auto" alt="Minigioco alfabeto">
                         <div class="card-body">
                             <h5 class="card-title">Alfabeto</h5>
                             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
@@ -45,4 +47,37 @@
     </div>
 
 </body>
+    <script>
+        const button = document.getElementById("speak");
+        const pauseButton = document.getElementById("pause");
+        const synth = window.speechSynthesis;
+        const voices = synth.getVoices();
+
+        function onLoad(){
+            if (synth.paused === true) {
+                    synth.resume();
+                    return;
+            }
+
+            const main = document.querySelector("main");
+            textToSpeech(main.innerText);
+            synth.cancel;
+        }
+
+        function textToSpeech(text) {
+            const msg = new SpeechSynthesisUtterance();
+             msg.text = text;
+             msg.voice = voices.filter(function (voice) { return voice.name === "Google italiano"; })[0];
+
+             synth.speak(msg);
+        }
+
+        (() => {
+            if (!"speechSynthesis" in window) {
+                alert("Scusa, il tuo browser non supporta il text to speech!");
+                return;
+            }
+        })();
+    </script>
+
 </html>

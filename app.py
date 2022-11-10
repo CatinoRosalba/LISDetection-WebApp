@@ -1,10 +1,9 @@
-from flask import Flask, render_template, Response, stream_with_context, session, redirect, url_for, stream_template
+from flask import Flask, render_template, Response, stream_with_context, session, stream_template
 import cv2
 import os
 import numpy as np
 import tensorflow as tf
 import random
-import pyttsx3
 import landmarks_connections as ddc
 
 app = Flask(__name__)
@@ -101,11 +100,3 @@ def detect_action():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-
-
-"""def voice():
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 150)
-    text = "Ciao, ho dei minigiochi che ti aiuteranno ad imparare il LIS"
-    engine.say(text)
-    engine.runAndWait()"""
