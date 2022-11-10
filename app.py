@@ -15,7 +15,6 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'gif')
 
 segni = np.array(['ciao', 'grazie', 'null', 'prego'])
 model = tf.keras.models.load_model("model.h5")
-
 camera = cv2.VideoCapture(0)
 
 def open_camera():
@@ -33,7 +32,7 @@ def detect(name_gif):
     sequence = []
     last = ''
     with ddc.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-        while camera.isOpened():
+        while session["isRecognized"] == False:
 
             ret, frame = camera.read()
             frame = cv2.flip(frame, 1)
@@ -54,10 +53,8 @@ def detect(name_gif):
                         yield "Sbagliato "
                     if name_gif == detected:
                         session["isRecognized"] = True
-                        session.pop("name_gif")
-                        session.pop("path_gif")
+                        session["counter"] = session.get("counter") + 1
                         yield "Corretto! "
-
 
 
 def randgif():
@@ -65,8 +62,6 @@ def randgif():
     gif_rand = random.choice(gifs)                                      # sceglie una gif
     name_gif, ex_gif = gif_rand.split(".")                              # splitta il nome (es. "hello.gif" -> name_gif = "hello", ex_gif = "gif")
     path_gifname = os.path.join(app.config['UPLOAD_FOLDER'], gif_rand)  # path della gif
-    session['name_gif'] = name_gif
-    session['path_gif'] = path_gifname
     return path_gifname, name_gif
 
 
@@ -74,7 +69,7 @@ def randgif():
 @app.route('/index')
 @app.route('/')
 def index():
-    session["isRecognized"] = False
+    session["counter"] = 0
     return Response(stream_with_context(render_template('index.html')))
 
 
@@ -82,13 +77,13 @@ def index():
 def gif():
     global path_gifname, name_gif
     path_gifname, name_gif = randgif()
+    session["isRecognized"] = False
     return stream_template("gif.html", sign_gif=path_gifname, name_gif=name_gif)
 
 
 #pagina minigioco
 @app.route('/minigioco')
 def minigioco():
-    session["isRecognized"] = False
     return stream_template("minigioco.html", name_gif=name_gif)
 
 
@@ -101,7 +96,6 @@ def video_feed():
 # In questo url viene eseguita la detection
 @app.route('/detect')
 def detect_action():
-    name_gif = session.get('name_gif', None)
     return stream_with_context(detect(name_gif))
 
 
