@@ -1,5 +1,6 @@
 const synth = window.speechSynthesis;
-const voices = synth.getVoices();
+var voices = []
+const msg = new SpeechSynthesisUtterance();
 synth.cancel();
 
 /*
@@ -19,9 +20,10 @@ function onLoad(){
 }
 
 function textToSpeech(text) {
-    const msg = new SpeechSynthesisUtterance();
+    voices = synth.getVoices();
     msg.text = text;
-    msg.voice = voices.filter(function (voice) { return voice.name === "Google italiano"; })[0];
+    msg.voice = voices[11];
+    msg.rate = 1.2;
 
     synth.speak(msg);
 }
