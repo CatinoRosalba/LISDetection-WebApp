@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = 'the random string'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'gif')
 
 segni = np.array(['ciao', 'grazie', 'null', 'prego'])
-model = tf.keras.models.load_model("model.h5")
+alfabeto = np.array(['a', 'b', 'c', 'd', 'e'])
 camera = cv2.VideoCapture(0)
 
 def open_camera():
@@ -26,7 +26,8 @@ def open_camera():
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
-def detect(name_gif):
+def detect_segni():
+    model = tf.keras.models.load_model("model_segni.h5")
     segni.sort()
     sequence = []
     last = ''
@@ -55,6 +56,36 @@ def detect(name_gif):
                         session["counter"] = session.get("counter") + 1
                         yield "Corretto! "
 
+def detect_alfabeto():
+    model = tf.keras.models.load_model("model_alfabeto.h5")
+    alfabeto.sort()
+    sequence = []
+    last = ''
+    with ddc.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+        while session["isRecognized"] == False:
+
+            ret, frame = camera.read()
+            frame = cv2.flip(frame, 1)
+            image, results = ddc.mediapipe_detection(frame, holistic)
+
+            keypoints = ddc.extract_keypoints(results)
+            sequence.append(keypoints)
+            sequence = sequence[-30:]
+
+            if len(sequence) == 30:
+                res = model.predict(np.expand_dims(sequence, axis=0))[0]
+                detected = alfabeto[np.argmax(res)]
+                print("detected: " + detected)
+                print("pic: " + name_pic)
+                if session["isRecognized"] == False:
+                    if detected != last:
+                        last = detected
+                        yield "Sbagliato "
+                    if name_gif == detected:
+                        session["isRecognized"] = True
+                        session["counter"] = session.get("counter") + 1
+                        yield "Corretto! "
+
 
 def randgif():
     gifs = os.listdir(app.config['UPLOAD_FOLDER'])                      # salva il contenuto della cartella gif
@@ -62,6 +93,13 @@ def randgif():
     name_gif, ex_gif = gif_rand.split(".")                              # splitta il nome (es. "hello.gif" -> name_gif = "hello", ex_gif = "gif")
     path_gifname = os.path.join(app.config['UPLOAD_FOLDER'], gif_rand)  # path della gif
     return path_gifname, name_gif
+
+def randpic():
+    pics = os.listdir(app.config['UPLOAD_FOLDER'])                      # salva il contenuto della cartella gif
+    pic_rand = random.choice(pics)                                      # sceglie una gif
+    name_pic, ex_pic = pic_rand.split(".")                              # splitta il nome (es. "hello.gif" -> name_gif = "hello", ex_gif = "gif")
+    path_picname = os.path.join(app.config['UPLOAD_FOLDER'], pic_rand)  # path della gif
+    return path_picname, name_pic
 
 
 #index
@@ -72,18 +110,31 @@ def index():
     return Response(stream_with_context(render_template('index.html')))
 
 
-@app.route('/gif')
-def gif():
+@app.route('/gif_segni')
+def gif_segni():
     global path_gifname, name_gif
     path_gifname, name_gif = randgif()
     session["isRecognized"] = False
-    return stream_template("gif.html", sign_gif=path_gifname, name_gif=name_gif)
+    return stream_template("gif_segni.html", sign_gif=path_gifname, name_gif=name_gif)
 
 
 #pagina minigioco
-@app.route('/minigioco')
-def minigioco():
-    return stream_template("minigioco.html", name_gif=name_gif)
+@app.route('/minigioco_segni')
+def minigioco_segni():
+    return stream_template("minigioco_segni.html", name_gif=name_gif)
+
+
+@app.route('/pic_alfabeto')
+def pic_alfabeto():
+    global path_picname, name_pic
+    path_picname, name_pic = randpic()
+    session["isRecognized"] = False
+    return stream_template("pic_alfabeto.html", alfabeto_pic=path_picname, name_pic=name_pic)
+
+
+@app.route('/minigioco_alfabeto')
+def minigioco_alfabeto():
+    return stream_template("minigioco_alfabeto.html", name_pic=name_pic)
 
 
 # In questo url viene eseguita solo la cam
@@ -94,8 +145,12 @@ def video_feed():
 
 # In questo url viene eseguita la detection
 @app.route('/detect')
-def detect_action():
-    return stream_with_context(detect(name_gif))
+def return_detect_segno():
+    return stream_with_context(detect_segni())
+
+
+def return_detect_alfabeto():
+    return stream_with_context(detect_alfabeto())
 
 
 if __name__ == '__main__':
