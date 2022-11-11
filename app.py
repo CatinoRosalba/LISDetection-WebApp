@@ -11,8 +11,9 @@ app = Flask(__name__)
 # secret key aggiunta altrimenti dava errore il passaggio delle variaibli tramite session
 app.config['SECRET_KEY'] = 'the random string'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'gif')
+app.config['UPLOAD_FOLDER_PIC'] = os.path.join('static', 'pic_alfabeto')
 
-segni = np.array(['ciao', 'grazie', 'null', 'prego'])
+segni = np.array(['ciao', 'grazie', 'null', 'prego', 'amico', 'bere', 'mangiare', 'mamma', 'papà'])
 alfabeto = np.array(['a', 'b', 'c', 'd', 'e'])
 camera = cv2.VideoCapture(0)
 
@@ -95,10 +96,12 @@ def randgif():
     return path_gifname, name_gif
 
 def randpic():
-    pics = os.listdir(app.config['UPLOAD_FOLDER'])                      # salva il contenuto della cartella gif
-    pic_rand = random.choice(pics)                                      # sceglie una gif
-    name_pic, ex_pic = pic_rand.split(".")                              # splitta il nome (es. "hello.gif" -> name_gif = "hello", ex_gif = "gif")
-    path_picname = os.path.join(app.config['UPLOAD_FOLDER'], pic_rand)  # path della gif
+    pics = os.listdir(app.config['UPLOAD_FOLDER_PIC'])                      # salva il contenuto della cartella gif
+    print(pics)
+    pic_rand = random.choice(pics)                                          # sceglie una pic
+    name_pic, ex_pic = pic_rand.split(".")                                  # splitta il nome
+    path_picname = os.path.join(app.config['UPLOAD_FOLDER_PIC'], pic_rand)  # path della gif
+    print(path_picname, name_pic)
     return path_picname, name_pic
 
 

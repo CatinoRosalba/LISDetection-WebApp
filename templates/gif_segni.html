@@ -11,15 +11,17 @@
     <script src="{{url_for('static', filename='js/text-to-speach.js')}}"></script>
 
     <title>Gif</title>
+
 </head>
+
 <body onload="onLoad()">
     <div class="vh-50">
 
-        <h1 class="text-center mb-5 mt-3">eLIS</h1>
+        <h1 class="text-center mb-4 mt-3">eLIS</h1>
 
         <div id="dialogo" class="text-center mb-3">
             <p class="fs-3 lh-sm">Memorizza questo segno!
-            <p class="fs-2">Significa: {{name_gif}} </p>
+            <p class="fs-2 mb-2">Significa: {{name_gif}} </p>
         </div>
 
         <div class="container text-center d-flex align-items-center justify-content-center" >
@@ -38,13 +40,4 @@
         </div>
     </div>
 </body>
-    <script>
-        const aLink = document.getElementsByTagName('a');
-        const stopSpeach = function() {
-           synth.cancel();
-        }
-        for (var i = aLink.length - 1; i >= 0; --i) {
-            aLink[i].onclick = stopSpeach;
-        }
-    </script>
 </html>
