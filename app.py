@@ -147,11 +147,12 @@ def video_feed():
 
 
 # In questo url viene eseguita la detection
-@app.route('/detect')
+@app.route('/detect_segno')
 def return_detect_segno():
     return stream_with_context(detect_segni())
 
 
+@app.route('/detect_alfabeto')
 def return_detect_alfabeto():
     return stream_with_context(detect_alfabeto())
 
