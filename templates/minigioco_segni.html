@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it-IT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,12 +28,12 @@
     </script>
 </head>
 
-<body onload="onLoad()">
+<body>
     <div class="vh-50">
 
         <h1 class="text-center mb-4 mt-3">eLIS</h1>
 
-        <div id="dialogo" class="text-center mb-3">
+        <div class="text-center mb-3">
             <p class="fs-5 lh-sm"> Clicca "inizia riconoscimento" <br> Mostrami il segno di {{name_gif}}
         </div>
 
@@ -52,7 +52,9 @@
 
                         <div>
                             <a id="index" class="btn btn-primary"  href="{{ url_for('index') }}"> Home </a>
-                            <button type="button" id="next" class="btn btn-primary" disabled> <a href="{{ url_for('gif_segni') }}"> Prossimo Segno </a> </button>
+                            <button type="button" id="next" class="btn btn-primary" disabled onclick="window.location.href='{{ url_for('gif_segni') }}'">
+                                Prossimo Segno
+                            </button>
                         </div>
 
                     </div>

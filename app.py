@@ -17,6 +17,7 @@ segni = np.array(['ciao', 'grazie', 'null', 'prego', 'amico', 'bere', 'mangiare'
 alfabeto = np.array(['a', 'b', 'c', 'd', 'e'])
 camera = cv2.VideoCapture(0)
 
+
 def open_camera():
     while camera.isOpened():
         ret, frame = camera.read()
@@ -33,7 +34,7 @@ def detect_segni():
     sequence = []
     last = ''
     with ddc.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-        while session["isRecognized"] == False:
+        while not session["isRecognized"]:
 
             ret, frame = camera.read()
             frame = cv2.flip(frame, 1)
@@ -48,14 +49,15 @@ def detect_segni():
                 detected = segni[np.argmax(res)]
                 print("detected: " + detected)
                 print("gif: " + name_gif)
-                if session["isRecognized"] == False:
+                if not session["isRecognized"]:
                     if detected != last:
                         last = detected
-                        yield "Sbagliato "
+                        yield "Riprova! "
                     if name_gif == detected:
                         session["isRecognized"] = True
                         session["counter"] = session.get("counter") + 1
                         yield "Corretto! "
+
 
 def detect_alfabeto():
     model = tf.keras.models.load_model("model_alfabeto.h5")
@@ -63,7 +65,7 @@ def detect_alfabeto():
     sequence = []
     last = ''
     with ddc.mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
-        while session["isRecognized"] == False:
+        while not session["isRecognized"]:
 
             ret, frame = camera.read()
             frame = cv2.flip(frame, 1)
@@ -78,10 +80,10 @@ def detect_alfabeto():
                 detected = alfabeto[np.argmax(res)]
                 print("detected: " + detected)
                 print("pic: " + name_pic)
-                if session["isRecognized"] == False:
+                if not session["isRecognized"]:
                     if detected != last:
                         last = detected
-                        yield "Sbagliato "
+                        yield "Riprova! "
                     if name_gif == detected:
                         session["isRecognized"] = True
                         session["counter"] = session.get("counter") + 1
@@ -95,6 +97,7 @@ def randgif():
     path_gifname = os.path.join(app.config['UPLOAD_FOLDER'], gif_rand)  # path della gif
     return path_gifname, name_gif
 
+
 def randpic():
     pics = os.listdir(app.config['UPLOAD_FOLDER_PIC'])                      # salva il contenuto della cartella gif
     print(pics)
@@ -105,7 +108,7 @@ def randpic():
     return path_picname, name_pic
 
 
-#index
+# Index
 @app.route('/index')
 @app.route('/')
 def index():
@@ -113,6 +116,7 @@ def index():
     return Response(stream_with_context(render_template('index.html')))
 
 
+# Pagina in cui viene mostrata la gif del segno da memorizzare
 @app.route('/gif_segni')
 def gif_segni():
     global path_gifname, name_gif
@@ -121,7 +125,7 @@ def gif_segni():
     return stream_template("gif_segni.html", sign_gif=path_gifname, name_gif=name_gif)
 
 
-#pagina minigioco
+# Pagina minigioco
 @app.route('/minigioco_segni')
 def minigioco_segni():
     return stream_template("minigioco_segni.html", name_gif=name_gif)
@@ -146,7 +150,7 @@ def video_feed():
     return Response(open_camera(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-# In questo url viene eseguita la detection
+# In questo url viene eseguita la detection del segno
 @app.route('/detect_segno')
 def return_detect_segno():
     return stream_with_context(detect_segni())
@@ -159,3 +163,4 @@ def return_detect_alfabeto():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
