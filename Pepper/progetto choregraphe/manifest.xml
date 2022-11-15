@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package version="0.0.0" uuid="prova-2">
+ <names>
+  <name lang="en_US">minigioco</name>
+  <name lang="it_IT">Prova2</name>
+ </names>
+ <supportedLanguages>
+  <language>it_IT</language>
+ </supportedLanguages>
+ <descriptionLanguages>
+  <language>en_US</language>
+  <language>it_IT</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="behavior_1">
+   <userRequestable/>
+   <nature>interactive</nature>
+   <permissions/>
+  </behaviorContent>
+ </contents>
+</package>

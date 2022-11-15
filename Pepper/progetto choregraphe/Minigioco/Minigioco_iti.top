@@ -1,0 +1,17 @@
+topic: ~Minigioco()
+language: iti
+
+concept:(gesti) [gesti]
+concept:(alfabeto) [alfabeto]
+
+# Replying to speech
+u:(e:onStart) ^start(animations/Stand/Gestures/Hey_1) Ciao, sono Pepper! ^wait(animations/Stand/Gestures/Hey_1) ^nextProposal
+proposal: $page=index Ho diverse attività che ti permetteranno di imparare il linguaggio dei segni italiano. Dimmi, quale vuoi fare?
+
+    u1:(~gesti) $UserChoice=1    
+    u1:(~alfabeto) $UserChoice=2    
+
+u:(e:UserChoice $UserChoice=="1") Iniziamo! $page="2"    $gesti=1
+
+u:(e:UserChoice $UserChoice=="2") Al momento non è disponibile!    $gesti=2
+

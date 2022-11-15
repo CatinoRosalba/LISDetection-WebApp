@@ -1,0 +1,13 @@
+topic: ~nuovaAttivita()
+language: iti
+
+concept:(affermativo)    [si "si grazie" "si pepper" "va bene" continuiamo]
+concept:(negativo)    [no ciao basta arriverderci "no grazie" "no pepper"]
+
+
+# Replying to speech
+u:(e:onStart) Vuoi continuare con una nuova attività?
+
+    u1:(~affermativo) $ricomincia=1
+    u1:(~negativo) è stato bello, alla prossima $onStopped=1
+    

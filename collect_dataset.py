@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
 import os
-import landmarks_connections as ddc
+import actionDetection_helper as ddc
 
-segni = np.array(['mamma', 'papà', 'mangiare', 'bere','amico'])                     # Azioni da riconoscere
+segni = np.array(['amico', 'mangiare', 'bere', 'grazie', 'prego', 'ciao', 'null'])                     # Azioni da riconoscere
 n_video = 5                                                                         # Numero video per azione
 frame_video = 30                                                                    # frame da salvare per ogni video
 
 #crea le cartelle dove salvare se non esistono
 def create_folders():
-    os.chdir('D:\Programmi\Programmi Python\LIS_2.0')
+    os.chdir(str(os.getcwd()))
     if not os.path.exists('DataSet'):
         os.mkdir('DataSet')
     if not os.path.exists('keypointsDataset'):
@@ -41,7 +41,7 @@ def register_video():
             ret, frame = cap.read()
             frame = cv2.flip(frame, 1)
             cv2.putText(frame, 'PREPARATI PER {} E PREMI Q'.format(segno), (120, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 4, cv2.LINE_AA)
-            cv2.imshow('OpenCV Feed', frame)
+            cv2.imshow('OpenCV .Feed', frame)
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 ready = True
         for video in range(n_video):
@@ -71,7 +71,7 @@ def register_video():
 
 #estrae i keypoints dai video salvati
 def extract_keypoints_dataset():
-    videoDataSetPath = 'D:\Programmi\Programmi Python\LIS_2.0\DataSet'
+    videoDataSetPath = str(os.getcwd()) + "\DataSet"
     videoList = os.listdir(videoDataSetPath)
     for video in videoList:
         videoPath = os.path.join("DataSet", str(video))
@@ -97,6 +97,6 @@ def extract_keypoints_dataset():
 
 if __name__ == "__main__":
     create_folders()
-    video_position()
-    register_video()
+    #video_position()
+    #register_video()
     extract_keypoints_dataset()

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script src="/libs/qimessaging/2/qimessaging.js"></script>
+    <script src="js/QiMHalper.js"></script>
+    <script src="js/jquery-3.6.1.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <title> Selezione minigioco </title>
+    
+  </head>
+
+  <body onload="onLoad()">
+
+    <div class="vh-50">
+
+        <h2 class="text-center mb-5 mt-3">Scegli il minigioco</h2>
+
+        <div class="container text-center d-flex align-items-center justify-content-center" >
+            <div class="row">
+                
+                <div class="card me-5 p-3" style="width: 18rem;" onClick="launchEventHome()">
+                    <div id="card1"></div>
+                        <img src="images/icons8-lingua-dei-segni-i-100.png" class="mx-auto" alt="Minigioco alfabeto">
+                        <div class="card-body" >
+                            <h5 class="card-title ">Segni</h5>                    
+                            <p class="card-text"> Some quick example text to build on the card title and make up the bulk of the card's content. </p>
+                        </div>
+                </div>
+
+                <div class="card p-3" style="width: 18rem;"> 
+                    <img src="images/icons8-s-100.png" class="mx-auto" alt="Minigioco alfabeto">
+                    <div class="card-body">
+                        <h5 class="card-title">Alfabeto</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    
+  </body>
+</html>

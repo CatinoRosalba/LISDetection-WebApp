@@ -1,10 +1,10 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-import landmarks_connections as ddc
+import actionDetection_helper as ddc
 
-segni = np.array(['ciao', 'grazie', 'null', 'prego'])
-model = tf.keras.models.load_model("model.h5")
+segni = np.array(['ciao', 'grazie', 'null', 'prego', 'amico', 'mangiare', 'bere'])
+model = tf.keras.models.load_model("model_segni.h5")
 
 def play_recognize():
     segni.sort()

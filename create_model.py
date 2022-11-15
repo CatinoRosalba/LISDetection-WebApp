@@ -9,9 +9,7 @@ from keras.utils import to_categorical
 from keras.backend import clear_session
 from sklearn.metrics import accuracy_score
 
-
-DATA_PATH = os.path.join('keypointsDataset')                                # path dataset
-segni = np.array(['ciao', 'grazie', 'null', 'prego'])                       # azioni da riconoscere
+segni = np.array(['ciao', 'grazie', 'null', 'prego', 'amico', "mangiare", "bere"])
 n_video = 75                                                                # numero DataSet1
 frame_video = 30                                                            # ogni DataSet1 30 frame
 log_dir = os.path.join('Logs')                                              # Log Directory
@@ -19,10 +17,10 @@ tb_callback = TensorBoard(log_dir=log_dir)                                  # in
 
 # assegna un nome ad ogni azione
 def define_label():
-    segni.sort()                        #ordine l'array per rispettare l'ordine alfabetico del dataset
+    segni.sort()                         #ordine l'array per rispettare l'ordine alfabetico del dataset
     label_map = {label:num for num, label in enumerate(segni)}
     pp.pprint(label_map)
-    keypointsDataSetPath = 'D:\Programmi\Programmi Python\LIS_daLavoro\keypointsDataset'
+    keypointsDataSetPath = str(os.getcwd()) + "\keypointsDataset"
     keypointsList = os.listdir(keypointsDataSetPath)
     sequences, labels = [], []
     for keypointFolder in keypointsList:
@@ -34,24 +32,21 @@ def define_label():
     for segno in segni:
         for i in range(n_video):
             labels.append(label_map[segno])
-            print(segno, label_map[segno])
     X = np.array(sequences)
     y = to_categorical(labels).astype(int)  #to_categorical converte un vettore di interi in una matrice binaria
     global x_train, x_test, y_train, y_test
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
-    print(x_train.shape)
-    print(y_train.shape)
 
 # Costruisce il modello della rete neurale
 def create_model():
     model = Sequential()
-    model.add(LSTM(128, return_sequences=True, activation='tanh', input_shape=(30, 1662)))
+    model.add(LSTM(256, return_sequences=True, activation='tanh', input_shape=(30, 1662)))
     model.add(LSTM(64, return_sequences=False, activation='tanh'))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(segni.shape[0], activation='softmax')) #3 neural units
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-    model.fit(x_train, y_train, epochs=60, callbacks=[tb_callback])
+    model.fit(x_train, y_train, epochs=150, callbacks=[tb_callback])
     pp.pprint(model.summary())
     return model
 
