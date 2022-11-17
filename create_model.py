@@ -7,13 +7,19 @@ from keras.layers import LSTM, Dense
 from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from keras.backend import clear_session
-from sklearn.metrics import accuracy_score
+from sklearn import metrics
+from matplotlib import pyplot as plt
+from sklearn.metrics import accuracy_score, classification_report
+import tensorflow as tf
+import seaborn as sns
+
 
 segni = np.array(['ciao', 'grazie', 'null', 'prego', 'amico', "mangiare", "bere"])
 n_video = 75                                                                # numero DataSet1
 frame_video = 30                                                            # ogni DataSet1 30 frame
 log_dir = os.path.join('Logs')                                              # Log Directory
 tb_callback = TensorBoard(log_dir=log_dir)                                  # info tensorflow
+
 
 # assegna un nome ad ogni azione
 def define_label():
@@ -35,7 +41,8 @@ def define_label():
     X = np.array(sequences)
     y = to_categorical(labels).astype(int)  #to_categorical converte un vettore di interi in una matrice binaria
     global x_train, x_test, y_train, y_test
-    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+    x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
+
 
 # Costruisce il modello della rete neurale
 def create_model():
@@ -44,11 +51,12 @@ def create_model():
     model.add(LSTM(64, return_sequences=False, activation='tanh'))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
-    model.add(Dense(segni.shape[0], activation='softmax')) #3 neural units
+    model.add(Dense(segni.shape[0], activation='softmax'))
     model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
     model.fit(x_train, y_train, epochs=150, callbacks=[tb_callback])
     pp.pprint(model.summary())
     return model
+
 
 def make_predictions(model):
     res = model.predict(x_test)
@@ -65,6 +73,7 @@ def delete_model():
     clear_session()
     pp.pprint("Model cancellato")
 
+
 # Calcola il livello di accuratezza della previsione in un range da 0 a 1
 def evaluation_accuracy(model):
     yhat = model.predict(x_train)
@@ -73,6 +82,28 @@ def evaluation_accuracy(model):
     print("Livello di accuratezza: ", accuracy_score(ytrue, yhat))
 
 
+def show_confusion_matrix():
+    model = tf.keras.models.load_model("model_segni.h5")
+    predictions = model.predict(x_test)
+    validations = np.argmax(y_test, axis=1).tolist()
+    predictions = np.argmax(predictions, axis=1).tolist()
+    matrix = metrics.confusion_matrix(validations, predictions)
+    labels = ['ciao', 'grazie', 'null', 'prego', 'amico', "mangiare", "bere"]
+    labels.sort()
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(matrix,
+                cmap='coolwarm',
+                linecolor='white',
+                linewidths=1,
+                xticklabels=labels,
+                yticklabels=labels,
+                annot=True,
+                fmt='d')
+    plt.title('Confusion Matrix')
+    plt.ylabel('True Label')
+    plt.xlabel('Predicted Label')
+    plt.show()
+    print(classification_report(validations, predictions))
 
 
 if __name__ == "__main__":
@@ -82,4 +113,5 @@ if __name__ == "__main__":
     save_model(model)
     make_predictions(model)
     evaluation_accuracy(model)
+    show_confusion_matrix()
     pp.pprint("Model creato")
